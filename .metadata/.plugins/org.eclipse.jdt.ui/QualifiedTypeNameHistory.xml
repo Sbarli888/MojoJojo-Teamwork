@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="android.view.View.OnClickListener"/>
+<fullyQualifiedTypeName name="android.widget.Toast"/>
+<fullyQualifiedTypeName name="com.telerik.everlive.sdk.core.EverliveApp"/>
+<fullyQualifiedTypeName name="com.telerik.everlive.sdk.core.model.system.User"/>
+<fullyQualifiedTypeName name="com.telerik.everlive.sdk.core.query.definition.UserSecretInfo"/>
+</qualifiedTypeNameHistroy>
