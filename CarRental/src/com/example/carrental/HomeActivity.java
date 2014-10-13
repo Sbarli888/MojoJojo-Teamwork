@@ -1,15 +1,22 @@
 package com.example.carrental;
 
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.telerik.everlive.sdk.core.EverliveApp;
@@ -18,44 +25,35 @@ import com.telerik.everlive.sdk.core.query.definition.UserSecretInfo;
 import com.telerik.everlive.sdk.core.result.RequestResult;
 import com.telerik.everlive.sdk.core.result.RequestResultCallbackAction;
 
+@SuppressLint("NewApi")
 public class HomeActivity extends Activity implements View.OnClickListener {
 
 	Context context = this;
 	Button registerBtn, loginBtn;
 	EditText username, password;
 	EverliveApp app;
-	String registrationMsg;
+	String registrationMsg, loginMsg;
 	ProgressDialog progress;
+	ProgressBar homeLoader;
+	ObjectAnimator waveOneAnimator;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		app = new EverliveApp("ZEW8xrnCpPDDsuQD");
-
 		setContentView(R.layout.activity_home);
-
-		registerBtn = (Button) findViewById(R.id.RegisterBtn);
-		loginBtn = (Button) findViewById(R.id.LoginBtn);
-		username = (EditText) findViewById(R.id.UsernameInput);
-		password = (EditText) findViewById(R.id.PasswordInput);
-
-		registerBtn.setOnClickListener(this);
-		loginBtn.setOnClickListener(this);
+		initializeElements();
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.home, menu);
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			return true;
@@ -64,25 +62,56 @@ public class HomeActivity extends Activity implements View.OnClickListener {
 	}
 
 	@Override
-	public void onClick(View view) {
+	public void onClick(final View view) {
+
+		String usernameAsString = username.getText().toString();
+		String passwordAsString = password.getText().toString();
+
 		if (view.getId() == R.id.RegisterBtn) {
 
-			String usernameAsString = username.getText().toString();
-			String passwordAsString = password.getText().toString();
-
 			registerUser(app, usernameAsString, passwordAsString);
+			animateButton(view);
+
 			Toast.makeText(context, "Registering...", Toast.LENGTH_LONG).show();
 			Handler handler = new Handler();
-	        handler.postDelayed(new Runnable() {
-	            @Override
-	            public void run() {
-	                Toast.makeText(context, registrationMsg, Toast.LENGTH_LONG).show();
-	            }
-	        }, 5000);
+			handler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					Toast.makeText(context, registrationMsg, Toast.LENGTH_LONG).show();
+				}
+			}, 5000);
 
-			//Toast.makeText(context, registrationMsg, Toast.LENGTH_LONG).show();
 		}
 
+		if (view.getId() == R.id.LoginBtn) {
+
+			loginUser(app, usernameAsString, passwordAsString);
+			animateButton(view);
+
+			Toast.makeText(context, "Logging...", Toast.LENGTH_LONG).show();
+			Handler handler = new Handler();
+			handler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+
+					Toast.makeText(context, loginMsg, Toast.LENGTH_LONG).show();
+					// startActivity(new
+					// Intent(HomeActivity.this,HomeActivity.class));
+				}
+			}, 5000);
+
+		}
+
+	}
+
+	public void initializeElements() {
+		registerBtn = (Button) findViewById(R.id.RegisterBtn);
+		loginBtn = (Button) findViewById(R.id.LoginBtn);
+		username = (EditText) findViewById(R.id.UsernameInput);
+		password = (EditText) findViewById(R.id.PasswordInput);
+
+		registerBtn.setOnClickListener(this);
+		loginBtn.setOnClickListener(this);
 	}
 
 	public void registerUser(EverliveApp app, String username, String password) {
@@ -107,5 +136,33 @@ public class HomeActivity extends Activity implements View.OnClickListener {
 		});
 
 	}
-	
+
+	public void loginUser(EverliveApp app, String username, String password) {
+
+		app.workWith().authentication().login(username, password).executeAsync(new RequestResultCallbackAction() {
+
+			@Override
+			public void invoke(RequestResult requestResult) {
+
+				loginMsg = "Login Failed";
+				if (requestResult.getSuccess()) {
+					loginMsg = "Login Successful!";
+				} else {
+					loginMsg = requestResult.getError().getMessage();
+				}
+			};
+		});
+
+	}
+
+	public void animateButton(View view) {
+		PropertyValuesHolder myView_Y = PropertyValuesHolder.ofFloat(view.TRANSLATION_Y, 20);
+		PropertyValuesHolder myView_X = PropertyValuesHolder.ofFloat(view.TRANSLATION_X, 0);
+		waveOneAnimator = ObjectAnimator.ofPropertyValuesHolder(view, myView_X, myView_Y);
+		waveOneAnimator.setRepeatCount(13); // -1 for infinite
+		waveOneAnimator.setRepeatMode(ValueAnimator.REVERSE);
+		waveOneAnimator.setDuration(400);
+		waveOneAnimator.start();
+	}
+
 }
