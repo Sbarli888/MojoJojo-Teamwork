@@ -9,13 +9,13 @@
 <stringAttribute key="com.android.ide.eclipse.adt.target" value="AUTO"/>
 <booleanAttribute key="com.android.ide.eclipse.adt.wipedata" value="false"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/Products"/>
-<listEntry value="/Products/AndroidManifest.xml"/>
+<listEntry value="/CarRental"/>
+<listEntry value="/CarRental/AndroidManifest.xml"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="4"/>
 <listEntry value="1"/>
 </listAttribute>
 <booleanAttribute key="org.eclipse.jdt.launching.ALLOW_TERMINATE" value="true"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="Products"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="CarRental"/>
 </launchConfiguration>

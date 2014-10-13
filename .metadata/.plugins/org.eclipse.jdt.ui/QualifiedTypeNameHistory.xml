@@ -1,41 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="android.view.View.OnClickListener"/>
 <fullyQualifiedTypeName name="android.widget.Toast"/>
 <fullyQualifiedTypeName name="com.telerik.everlive.sdk.core.EverliveApp"/>
 <fullyQualifiedTypeName name="com.telerik.everlive.sdk.core.model.system.User"/>
 <fullyQualifiedTypeName name="com.telerik.everlive.sdk.core.query.definition.UserSecretInfo"/>
-<fullyQualifiedTypeName name="android.os.Handler"/>
-<fullyQualifiedTypeName name="android.app.ProgressDialog"/>
-<fullyQualifiedTypeName name="android.R.id"/>
-<fullyQualifiedTypeName name="android.widget.ArrayAdapter"/>
-<fullyQualifiedTypeName name="com.example.products.R.id"/>
-<fullyQualifiedTypeName name="android.app.ListActivity"/>
-<fullyQualifiedTypeName name="android.widget.ListView"/>
-<fullyQualifiedTypeName name="android.widget.AdapterView.OnItemClickListener"/>
-<fullyQualifiedTypeName name="android.widget.AdapterView"/>
-<fullyQualifiedTypeName name="android.app.Fragment"/>
-<fullyQualifiedTypeName name="android.app.FragmentManager"/>
-<fullyQualifiedTypeName name="android.app.FragmentTransaction"/>
-<fullyQualifiedTypeName name="android.widget.TextView"/>
-<fullyQualifiedTypeName name="android.webkit.WebView.FindListener"/>
-<fullyQualifiedTypeName name="com.example.products.R.layout"/>
-<fullyQualifiedTypeName name="com.example.products.ProductInfo"/>
-<fullyQualifiedTypeName name="com.example.products.ProductObject"/>
-<fullyQualifiedTypeName name="java.util.List"/>
-<fullyQualifiedTypeName name="android.app.Activity"/>
-<fullyQualifiedTypeName name="android.annotation.SuppressLint"/>
-<fullyQualifiedTypeName name="android.app.Service"/>
-<fullyQualifiedTypeName name="com.example.musicstream.R.raw"/>
-<fullyQualifiedTypeName name="android.content.Context"/>
-<fullyQualifiedTypeName name="android.view.View.OnClickListener"/>
-<fullyQualifiedTypeName name="com.example.musicstream.R.id"/>
-<fullyQualifiedTypeName name="com.example.musicstream.StreamService"/>
-<fullyQualifiedTypeName name="android.widget.ProgressBar"/>
-<fullyQualifiedTypeName name="android.view.View"/>
-<fullyQualifiedTypeName name="com.example.carrental.R.id"/>
-<fullyQualifiedTypeName name="com.example.carrental.HomeActivity"/>
-<fullyQualifiedTypeName name="android.content.Intent"/>
-<fullyQualifiedTypeName name="android.animation.ObjectAnimator"/>
-<fullyQualifiedTypeName name="android.animation.ValueAnimator"/>
-<fullyQualifiedTypeName name="android.animation.PropertyValuesHolder"/>
 </qualifiedTypeNameHistroy>
