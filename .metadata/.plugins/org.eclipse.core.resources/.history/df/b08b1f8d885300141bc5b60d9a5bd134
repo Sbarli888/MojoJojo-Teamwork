@@ -1,0 +1,80 @@
+package com.example.carrental;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+public class CarAdapter extends ArrayAdapter<CarModel> {
+	
+	static class ViewHolder
+	{
+		TextView model, price;
+		ImageView item_image;
+	}
+	
+	private int customResource;
+	private Context context;
+	private Drawable thumb;
+	
+	public CarAdapter(Context context, int resource)
+	{
+		super(context, resource);
+		customResource = resource;
+		this.context = context;
+	}
+	
+	
+	private void initComponents(View v, ViewHolder holder) {
+		holder.model = (TextView) v.findViewById(R.id.model);
+		holder.price = (TextView) v.findViewById(R.id.price);
+		holder.item_image = (ImageView) v.findViewById(R.id.list_image);
+	}
+	
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		// TODO Auto-generated method stub
+		ViewHolder holder = null;
+		
+		if (convertView == null) {
+			holder = new ViewHolder();
+			LayoutInflater inflate = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			convertView = inflate.inflate(customResource, parent, false);
+			if (convertView != null)
+				initComponents(convertView, holder);
+			
+			convertView.setTag(holder);
+		} else {
+			holder = (ViewHolder) convertView.getTag();
+		}
+		
+		URL imgUrl = new URL(holder.item_image.toString());
+		
+		holder.model.setText(this.getItem(position).getModel());
+		holder.price.setText(Double.toString(this.getItem(position).getPrice()));		
+		//holder.item_image.setImageDrawable(thumb);
+		holder.item_image.setImageBitmap(BitmapFactory.decodeStream(imgUrl.openConnection().getInputStream()));
+		
+		return convertView;
+	}
+	
+	
+	
+	public static void imageFromUrl(String url) throws IOException {
+		URL newurl = new URL(url);
+		
+	}
+	
+}

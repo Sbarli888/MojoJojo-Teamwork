@@ -1,0 +1,17 @@
+package com.example.carrental;
+
+import com.telerik.everlive.sdk.core.EverliveApp;
+
+import android.app.Activity;
+import android.os.Bundle;
+
+public class AvailableCarsActivity extends Activity {
+
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		app = new EverliveApp("ZEW8xrnCpPDDsuQD");
+		setContentView(R.layout.activity_home);
+//		initializeElements();
+	}
+}

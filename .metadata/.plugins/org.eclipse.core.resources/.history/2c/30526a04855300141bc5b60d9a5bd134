@@ -1,0 +1,70 @@
+package com.example.carrental;
+
+import java.util.ArrayList;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+public class CarAdapter extends ArrayAdapter<CarModel> {
+	
+	static class ViewHolder
+	{
+		TextView model, price;
+		ImageView item_image;
+	}
+	
+	private int customResource;
+	private Context context;
+	
+	public CarAdapter(Context context, int resource)
+	{
+		super(context, resource);
+		customResource = resource;
+		this.context = context;
+	}
+	
+	
+	private void initComponents(View v, ViewHolder holder) {
+		holder.model = (TextView) v.findViewById(R.id.title);
+		holder.price = (TextView) v.findViewById(R.id.price);
+		holder.item_image = (ImageView) v.findViewById(R.id.list_image);
+	}
+	
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		// TODO Auto-generated method stub
+		ViewHolder holder = null;
+		
+		if (convertView == null) {
+			holder = new ViewHolder();
+			LayoutInflater inflate = (LayoutInflater) context
+			        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			convertView = inflate.inflate(customResource, parent, false);
+			if (convertView != null)
+				initComponents(convertView, holder);
+			
+			convertView.setTag(holder);
+		} else {
+			holder = (ViewHolder) convertView.getTag();
+		}
+		
+		holder.model.setText(this.getItem(position).getModel());
+		holder.price.setText(Double.toString(this.getItem(position).getPrice()));		
+		holder.item_image.setImageBitmap(BitmapFactory.decodeResource(
+		        context.getResources(), R.drawable.ic_launcher));
+		
+		return convertView;
+	}
+	
+}

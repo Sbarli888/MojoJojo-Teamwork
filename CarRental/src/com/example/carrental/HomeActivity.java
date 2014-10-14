@@ -1,5 +1,7 @@
 package com.example.carrental;
 
+import java.util.UUID;
+
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
@@ -20,6 +22,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.telerik.everlive.sdk.core.EverliveApp;
+import com.telerik.everlive.sdk.core.facades.special.DownloadFileAsStreamFacade;
 import com.telerik.everlive.sdk.core.model.system.User;
 import com.telerik.everlive.sdk.core.query.definition.UserSecretInfo;
 import com.telerik.everlive.sdk.core.result.RequestResult;
@@ -68,6 +71,9 @@ public class HomeActivity extends Activity implements View.OnClickListener {
 		String passwordAsString = password.getText().toString();
 
 		if (view.getId() == R.id.RegisterBtn) {
+			
+			//getDownloadLink(app,UUID.fromString("09808290-537a-11e4-bfa3-e1f7e951d142"));
+			
 
 			registerUser(app, usernameAsString, passwordAsString);
 			animateButton(view);
@@ -93,10 +99,8 @@ public class HomeActivity extends Activity implements View.OnClickListener {
 			handler.postDelayed(new Runnable() {
 				@Override
 				public void run() {
-
 					Toast.makeText(context, loginMsg, Toast.LENGTH_LONG).show();
-					// startActivity(new
-					// Intent(HomeActivity.this,HomeActivity.class));
+					 startActivity(new Intent(HomeActivity.this,AvailableCarsActivity.class));
 				}
 			}, 5000);
 
@@ -153,6 +157,14 @@ public class HomeActivity extends Activity implements View.OnClickListener {
 			};
 		});
 
+	}
+	
+	public void getDownloadLink(EverliveApp app, UUID fileId)
+	{
+	     DownloadFileAsStreamFacade a = app.workWith().files().download(fileId);
+	     Toast.makeText(context, a.getDownloadPath().toString(), Toast.LENGTH_LONG).show();
+	     
+	    
 	}
 
 	public void animateButton(View view) {
