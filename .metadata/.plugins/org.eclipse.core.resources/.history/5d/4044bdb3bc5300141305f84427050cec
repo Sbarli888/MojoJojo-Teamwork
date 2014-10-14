@@ -1,0 +1,43 @@
+//package com.example.carrental;
+//
+//import java.util.ArrayList;
+//
+//import android.os.AsyncTask;
+//import android.util.Log;
+//
+//import com.telerik.everlive.sdk.core.result.RequestResult;
+//import com.telerik.everlive.sdk.core.result.RequestResultCallbackAction;
+//
+//public class CarsListUpdater extends AsyncTask<Void, Void, Void>() {
+//        
+//		@Override
+//        protected Void doInBackground(Void... params) {
+//          
+//        		Log.d("SSSSSSSSSSSSSSSSSSSSSSS", "ASYNC");
+////            	getAllData(new RequestResultCallbackAction<ArrayList<CarModel>>(){
+////
+////        			@Override
+////        			public void invoke(RequestResult<ArrayList<CarModel>> result) {
+////        				if(result.getSuccess()){
+////        					for(CarModel car: result.getValue()){
+////        						CarModel tempCar = new CarModel(car.getModel(),car.getYear(),car.getPrice(),car.getConsumption(),car.getImageUrl(),car.isAvailable());
+////        						cars.add(tempCar);
+////        					}
+////        					adapter = new CarAdapter(mContext, cars);
+////        				}
+////        				else{
+////        					Log.d("SSDSDAS", "fail");
+////        				}
+////        				
+////        			}
+////
+////        			
+////        		});
+//            	//carsListView.setAdapter(adapter);
+//				return null;
+//            	
+//        }
+//
+//}
+//
+//

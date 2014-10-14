@@ -1,0 +1,69 @@
+package com.example.carrental;
+
+import com.telerik.everlive.sdk.core.serialization.ServerIgnore;
+import com.telerik.everlive.sdk.core.serialization.ServerProperty;
+import com.telerik.everlive.sdk.core.serialization.ServerType;
+
+@ServerType("Car")
+public class CarModel {
+
+	@ServerProperty("CarModel")
+	private String model;
+	@ServerProperty("Year")
+	private int year;
+	@ServerProperty("Price")
+	private double price;
+	@ServerProperty("Consumption")
+	private double consumption;
+	@ServerIgnore
+	private String imageUrl;
+
+	public CarModel(String model, int year, double price, double consumption, String imageUrl) {
+		this.model = model;
+		this.year = year;
+		this.price = price;
+		this.consumption = consumption;
+		this.imageUrl = imageUrl;
+	}
+	
+	public String getModel() {
+		return model;
+	}
+
+	public void setModel(String model) {
+		this.model = model;
+	}
+
+	public int getYear() {
+		return year;
+	}
+
+	public void setYear(int year) {
+		this.year = year;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public double getConsumption() {
+		return consumption;
+	}
+
+	public void setConsumption(double consumption) {
+		this.consumption = consumption;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
+}

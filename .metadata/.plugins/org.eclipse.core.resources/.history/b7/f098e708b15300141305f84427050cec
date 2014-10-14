@@ -1,0 +1,76 @@
+package com.example.carrental;
+
+
+import java.util.UUID;
+
+import com.telerik.everlive.sdk.core.model.system.File;
+import com.telerik.everlive.sdk.core.serialization.ServerIgnore;
+import com.telerik.everlive.sdk.core.serialization.ServerProperty;
+import com.telerik.everlive.sdk.core.serialization.ServerType;
+
+@ServerType("Cars")
+public class CarModel{
+
+	@ServerProperty("CarModel")
+	private String model;
+	@ServerProperty("Year")
+	private int year;
+	@ServerProperty("Price")
+	private double price;
+	@ServerProperty("Consumption")
+	private double consumption;
+	@ServerProperty("Image")
+	private UUID imageUrl;
+	@ServerProperty("IsAvailable")
+	private boolean isAvailable;
+
+	public CarModel(String model, int year, double price, double consumption, UUID imageUrl, boolean isAvailable) {
+		this.model = model;
+		this.year = year;
+		this.price = price;
+		this.consumption = consumption;
+		this.imageUrl = imageUrl;
+		this.isAvailable = isAvailable;
+	}
+	
+	public String getModel() {
+		return model;
+	}
+
+	public void setModel(String model) {
+		this.model = model;
+	}
+
+	public int getYear() {
+		return year;
+	}
+
+	public void setYear(int year) {
+		this.year = year;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public double getConsumption() {
+		return consumption;
+	}
+
+	public void setConsumption(double consumption) {
+		this.consumption = consumption;
+	}
+
+	public UUID getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(UUID imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
+}
