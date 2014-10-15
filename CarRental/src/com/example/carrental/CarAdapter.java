@@ -14,6 +14,15 @@ public class CarAdapter extends BaseAdapter {
 
 	private ArrayList listData;
 
+	public ArrayList getListData() {
+		return listData;
+	}
+
+	public void setListData(ArrayList listData) {
+		this.listData.clear();
+		this.listData = listData;
+	}
+
 	private LayoutInflater layoutInflater;
 
 	public CarAdapter(Context context, ArrayList listData) {

@@ -15,6 +15,8 @@ import com.telerik.everlive.sdk.core.serialization.ServerType;
 @ServerType("Cars")
 public class CarModel{
 
+	@ServerProperty("Id")
+	private UUID carId;
 	@ServerProperty("CarModel")
 	private String model;
 	@ServerProperty("Year")
@@ -30,7 +32,8 @@ public class CarModel{
 	@ServerIgnore
 	private String location;
 
-	public CarModel(String model, int year, double price, double consumption, String imageUrl, boolean isAvailable) {
+	public CarModel(UUID carId, String model, int year, double price, double consumption, String imageUrl, boolean isAvailable) {
+		this.carId = carId;
 		this.model = model;
 		this.year = year;
 		this.price = price;
@@ -85,6 +88,10 @@ public class CarModel{
 
 	public void setAvailable(boolean isAvailable) {
 		this.isAvailable = isAvailable;
+	}
+	
+	public UUID getCarId() {
+		return carId;
 	}
 
 

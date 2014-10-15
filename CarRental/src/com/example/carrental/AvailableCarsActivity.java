@@ -3,6 +3,7 @@ package com.example.carrental;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
@@ -19,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -34,10 +36,15 @@ public class AvailableCarsActivity extends Activity implements
 	private Context mContext;
 	private CarAdapter adapter;
 	private ArrayList<CarModel> cars;
+	private ArrayList<String> carsIds;
 	private ListView carsListView;
 	private UserDataPreference userPrefs;
 	private EverliveApp app;
 	private ListviewUpdater updater;
+	private boolean toBeNotified;
+	private int carsCount;
+
+	Handler handler;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -46,7 +53,13 @@ public class AvailableCarsActivity extends Activity implements
 		initializeElements();
 		setActionBar();
 		
-		updater.execute();
+		adapter = new CarAdapter(mContext, cars);
+
+		carsListView.setAdapter(adapter);
+		
+		callAsynchronousTask();
+		
+		
 	}
 
 	@Override
@@ -64,6 +77,7 @@ public class AvailableCarsActivity extends Activity implements
 		CarModel car = (CarModel) o;
 		Toast.makeText(AvailableCarsActivity.this, "Selected :" + " " + car,
 				Toast.LENGTH_LONG).show();
+		callAsynchronousTask();
 
 	}
 
@@ -73,6 +87,9 @@ public class AvailableCarsActivity extends Activity implements
 		carsListView = (ListView) findViewById(R.id.listView1);
 		userPrefs = new UserDataPreference(getApplicationContext());
 		updater = new ListviewUpdater();
+		toBeNotified = true;
+		carsIds = new ArrayList<String>();
+		carsCount = 0;
 	}
 
 	@Override
@@ -80,13 +97,13 @@ public class AvailableCarsActivity extends Activity implements
 		if (item.getItemId() == R.id.action_logout) {
 			Toast.makeText(mContext, "Logging out", Toast.LENGTH_LONG).show();
 			userPrefs.forget();
-			Intent intent = new Intent(AvailableCarsActivity.this,
-					HomeActivity.class);
+			Intent intent = new Intent(AvailableCarsActivity.this,HomeActivity.class);
 			startActivity(intent);
 			return true;
 		}
 		if (item.getItemId() == R.id.action_refresh) {
-			// showData(); // todo
+			adapter.notifyDataSetChanged();
+			callAsynchronousTask();
 			return true;
 		}
 		return false;
@@ -101,34 +118,29 @@ public class AvailableCarsActivity extends Activity implements
 		bar.show();
 	}
 
-	// public void getAllData(RequestResultCallbackAction<ArrayList<CarModel>>
-	// callbackAction) {
-	// this.app.workWith().data(CarModel.class).getAll().executeAsync(callbackAction);
-	// }
-	//
-	// public void showData() {
-	// getAllData(new RequestResultCallbackAction<ArrayList<CarModel>>() {
-	//
-	// @Override
-	// public void invoke(RequestResult<ArrayList<CarModel>> result) {
-	// if (result.getSuccess()) {
-	// Log.d("SSDSDAS", "OK");
-	// for (CarModel car : result.getValue()) {
-	// CarModel tempCar = new CarModel(car.getModel(),
-	// car.getYear(), car.getPrice(),
-	// car.getConsumption(), car.getImageUrl(),
-	// car.isAvailable());
-	// cars.add(tempCar);
-	// }
-	//
-	// adapter = new CarAdapter(mContext, cars);//
-	// carsListView.setAdapter(adapter);
-	// } else {
-	// Log.d("SSDSDAS", "fail");
-	// }
-	// }
-	// });
-	// }
+
+public void callAsynchronousTask() {
+    final Handler handler = new Handler();
+    Timer timer = new Timer();
+    TimerTask doAsynchronousTask = new TimerTask() {       
+        @Override
+        public void run() {
+            handler.post(new Runnable() {
+                public void run() {       
+                    try {
+                    	ListviewUpdater performBackgroundTask = new ListviewUpdater();
+                        // PerformBackgroundTask this class is the class that extends AsynchTask 
+                        performBackgroundTask.execute();
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                    }
+                }
+            });
+        }
+    };
+    timer.schedule(doAsynchronousTask, 0, 5000); //execute in every 50000 ms
+}
+
 
 
 
@@ -141,26 +153,61 @@ public class AvailableCarsActivity extends Activity implements
 					.data(CarModel.class).getAll().executeSync();
 			if (result.getSuccess()) {
 				Log.d("SSDSDAS", "OK");
+				cars.clear();
 				for (CarModel car : result.getValue()) {
-					CarModel tempCar = new CarModel(car.getModel(),
+					CarModel tempCar = new CarModel(car.getCarId(),car.getModel(),
 							car.getYear(), car.getPrice(),
 							car.getConsumption(), car.getImageUrl(),
 							car.isAvailable());
-					cars.add(tempCar);
+						
+					Log.d("CARID", tempCar.getCarId().toString());
+					if(tempCar.isAvailable()){
+						cars.add(tempCar);
+					}
+					else {
+						if(carsIds.contains(tempCar.getCarId().toString())){
+							carsIds.remove(tempCar.getCarId().toString());
+							toBeNotified = true;
+						}						
+					}
+					if(cars.size() != carsCount){
+						carsCount = cars.size();
+						toBeNotified = true;
+					}
+//					if(!(carsIds.contains(tempCar.getCarId().toString()))){
+//						carsIds.add(tempCar.getCarId().toString());
+//						toBeNotified = true;
+//					}
+//					if(carsIds.size() != carsCount){
+//						carsCount = carsIds.size();
+//						toBeNotified = true;
+//					}
 				}
-
 				return cars;
 			} else {
 				Log.d("SSDSDAS", "fail");
 			}
-
 			return null;
 		}
 
 		@Override
 		protected void onPostExecute(ArrayList<CarModel> cars) {
-			adapter = new CarAdapter(mContext, cars);
-			carsListView.setAdapter(adapter);
+	
+			ArrayList<String> tempIds = new ArrayList<String>();
+			for (CarModel car : cars) {
+				if(!(carsIds.contains(car.getCarId().toString()))){
+					toBeNotified = true;
+				}
+				tempIds.add(car.getCarId().toString());
+			}			
+			
+			carsIds = new ArrayList<String>(tempIds);
+			
+			if(toBeNotified){
+				adapter.notifyDataSetChanged();
+			}
+			toBeNotified = false;
+			
 		}
 
 	}
