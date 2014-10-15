@@ -27,15 +27,27 @@ import com.telerik.everlive.sdk.core.result.RequestResult;
 import com.telerik.everlive.sdk.core.result.RequestResultCallbackAction;
 
 @SuppressLint("NewApi")
-public class AvailableCarsActivity extends Activity implements OnItemClickListener {
+public class AvailableCarsActivity extends Activity implements
+		OnItemClickListener {
 
-	ListView list;
+	private ListView list;
 	private Context mContext;
-	CarAdapter adapter;
+	private CarAdapter adapter;
 	private ArrayList<CarModel> cars;
-	ListView carsListView;
+	private ListView carsListView;
 	private UserDataPreference userPrefs;
-	EverliveApp app;
+	private EverliveApp app;
+	private ListviewUpdater updater;
+
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		app = new EverliveApp("ZEW8xrnCpPDDsuQD");
+		setContentView(R.layout.activity_available_cars);
+		initializeElements();
+		setActionBar();
+		
+		updater.execute();
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -45,20 +57,13 @@ public class AvailableCarsActivity extends Activity implements OnItemClickListen
 		return super.onCreateOptionsMenu(menu);
 	}
 
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		app = new EverliveApp("ZEW8xrnCpPDDsuQD");
-		setContentView(R.layout.activity_available_cars);
-		initializeElements();
-		setActionBar();
-
-	}
-
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+	public void onItemClick(AdapterView<?> parent, View view, int position,
+			long id) {
 		Object o = carsListView.getItemAtPosition(position);
 		CarModel car = (CarModel) o;
-		Toast.makeText(AvailableCarsActivity.this, "Selected :" + " " + car, Toast.LENGTH_LONG).show();
+		Toast.makeText(AvailableCarsActivity.this, "Selected :" + " " + car,
+				Toast.LENGTH_LONG).show();
 
 	}
 
@@ -67,6 +72,7 @@ public class AvailableCarsActivity extends Activity implements OnItemClickListen
 		cars = new ArrayList<CarModel>();
 		carsListView = (ListView) findViewById(R.id.listView1);
 		userPrefs = new UserDataPreference(getApplicationContext());
+		updater = new ListviewUpdater();
 	}
 
 	@Override
@@ -74,7 +80,8 @@ public class AvailableCarsActivity extends Activity implements OnItemClickListen
 		if (item.getItemId() == R.id.action_logout) {
 			Toast.makeText(mContext, "Logging out", Toast.LENGTH_LONG).show();
 			userPrefs.forget();
-			Intent intent = new Intent(AvailableCarsActivity.this, HomeActivity.class);
+			Intent intent = new Intent(AvailableCarsActivity.this,
+					HomeActivity.class);
 			startActivity(intent);
 			return true;
 		}
@@ -94,33 +101,67 @@ public class AvailableCarsActivity extends Activity implements OnItemClickListen
 		bar.show();
 	}
 
-	public void getAllData(RequestResultCallbackAction<ArrayList<CarModel>> callbackAction) {
-		this.app.workWith().data(CarModel.class).getAll().executeAsync(callbackAction);
-	}
-
-	// public void showData(){
-	// getAllData(new RequestResultCallbackAction<ArrayList<CarModel>>(){
+	// public void getAllData(RequestResultCallbackAction<ArrayList<CarModel>>
+	// callbackAction) {
+	// this.app.workWith().data(CarModel.class).getAll().executeAsync(callbackAction);
+	// }
 	//
+	// public void showData() {
+	// getAllData(new RequestResultCallbackAction<ArrayList<CarModel>>() {
 	//
 	// @Override
 	// public void invoke(RequestResult<ArrayList<CarModel>> result) {
-	// if(result.getSuccess()){
-	//
-	// for(CarModel car: result.getValue()){
-	// CarModel tempCar = new
-	// CarModel(car.getModel(),car.getYear(),car.getPrice(),car.getConsumption(),car.getImageUrl(),car.isAvailable());
+	// if (result.getSuccess()) {
+	// Log.d("SSDSDAS", "OK");
+	// for (CarModel car : result.getValue()) {
+	// CarModel tempCar = new CarModel(car.getModel(),
+	// car.getYear(), car.getPrice(),
+	// car.getConsumption(), car.getImageUrl(),
+	// car.isAvailable());
 	// cars.add(tempCar);
 	// }
 	//
 	// adapter = new CarAdapter(mContext, cars);//
-	// //carsListView.setAdapter(adapter);
-	// }
-	// else{
+	// carsListView.setAdapter(adapter);
+	// } else {
 	// Log.d("SSDSDAS", "fail");
 	// }
-	//
 	// }
 	// });
 	// }
 
+
+
+	private class ListviewUpdater extends AsyncTask<Void, Void, ArrayList<CarModel>> {
+		EverliveApp app = new EverliveApp("ZEW8xrnCpPDDsuQD");
+
+		@Override
+		protected ArrayList<CarModel> doInBackground(Void... params) {
+			RequestResult<ArrayList<CarModel>> result = this.app.workWith()
+					.data(CarModel.class).getAll().executeSync();
+			if (result.getSuccess()) {
+				Log.d("SSDSDAS", "OK");
+				for (CarModel car : result.getValue()) {
+					CarModel tempCar = new CarModel(car.getModel(),
+							car.getYear(), car.getPrice(),
+							car.getConsumption(), car.getImageUrl(),
+							car.isAvailable());
+					cars.add(tempCar);
+				}
+
+				return cars;
+			} else {
+				Log.d("SSDSDAS", "fail");
+			}
+
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(ArrayList<CarModel> cars) {
+			adapter = new CarAdapter(mContext, cars);
+			carsListView.setAdapter(adapter);
+		}
+
+	}
 }

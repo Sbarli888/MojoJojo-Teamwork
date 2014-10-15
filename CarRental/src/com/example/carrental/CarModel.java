@@ -27,6 +27,8 @@ public class CarModel{
 	private String imageUrl;
 	@ServerProperty("IsAvailable")
 	private boolean isAvailable;
+	@ServerIgnore
+	private String location;
 
 	public CarModel(String model, int year, double price, double consumption, String imageUrl, boolean isAvailable) {
 		this.model = model;
