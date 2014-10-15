@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -29,8 +31,7 @@ import com.telerik.everlive.sdk.core.result.RequestResult;
 import com.telerik.everlive.sdk.core.result.RequestResultCallbackAction;
 
 @SuppressLint("NewApi")
-public class AvailableCarsActivity extends Activity implements
-		OnItemClickListener {
+public class AvailableCarsActivity extends Activity implements OnItemLongClickListener {
 
 	private ListView list;
 	private Context mContext;
@@ -52,14 +53,13 @@ public class AvailableCarsActivity extends Activity implements
 		setContentView(R.layout.activity_available_cars);
 		initializeElements();
 		setActionBar();
-		
+
 		adapter = new CarAdapter(mContext, cars);
 
 		carsListView.setAdapter(adapter);
-		
+		carsListView.setOnItemLongClickListener(this);
 		callAsynchronousTask();
-		
-		
+
 	}
 
 	@Override
@@ -68,17 +68,6 @@ public class AvailableCarsActivity extends Activity implements
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.actionbar_logout, menu);
 		return super.onCreateOptionsMenu(menu);
-	}
-
-	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position,
-			long id) {
-		Object o = carsListView.getItemAtPosition(position);
-		CarModel car = (CarModel) o;
-		Toast.makeText(AvailableCarsActivity.this, "Selected :" + " " + car,
-				Toast.LENGTH_LONG).show();
-		callAsynchronousTask();
-
 	}
 
 	private void initializeElements() {
@@ -93,11 +82,26 @@ public class AvailableCarsActivity extends Activity implements
 	}
 
 	@Override
+	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+		Object o = carsListView.getItemAtPosition(position);
+		CarModel car = (CarModel) o;
+
+		Intent intent = new Intent(AvailableCarsActivity.this, CarDetailsActivity.class);
+		CarModel selectedCar = cars.get(position);
+		intent.putExtra("SelectedCar", selectedCar);
+		this.startActivity(intent);
+
+		
+		// callAsynchronousTask();
+		return true;
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.action_logout) {
 			Toast.makeText(mContext, "Logging out", Toast.LENGTH_LONG).show();
 			userPrefs.forget();
-			Intent intent = new Intent(AvailableCarsActivity.this,HomeActivity.class);
+			Intent intent = new Intent(AvailableCarsActivity.this, HomeActivity.class);
 			startActivity(intent);
 			return true;
 		}
@@ -118,70 +122,64 @@ public class AvailableCarsActivity extends Activity implements
 		bar.show();
 	}
 
-
-public void callAsynchronousTask() {
-    final Handler handler = new Handler();
-    Timer timer = new Timer();
-    TimerTask doAsynchronousTask = new TimerTask() {       
-        @Override
-        public void run() {
-            handler.post(new Runnable() {
-                public void run() {       
-                    try {
-                    	ListviewUpdater performBackgroundTask = new ListviewUpdater();
-                        // PerformBackgroundTask this class is the class that extends AsynchTask 
-                        performBackgroundTask.execute();
-                    } catch (Exception e) {
-                        // TODO Auto-generated catch block
-                    }
-                }
-            });
-        }
-    };
-    timer.schedule(doAsynchronousTask, 0, 5000); //execute in every 50000 ms
-}
-
-
-
+	public void callAsynchronousTask() {
+		final Handler handler = new Handler();
+		Timer timer = new Timer();
+		TimerTask doAsynchronousTask = new TimerTask() {
+			@Override
+			public void run() {
+				handler.post(new Runnable() {
+					public void run() {
+						try {
+							ListviewUpdater performBackgroundTask = new ListviewUpdater();
+							// PerformBackgroundTask this class is the class
+							// that extends AsynchTask
+							performBackgroundTask.execute();
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+						}
+					}
+				});
+			}
+		};
+		timer.schedule(doAsynchronousTask, 0, 5000); // execute in every 50000
+														// ms
+	}
 
 	private class ListviewUpdater extends AsyncTask<Void, Void, ArrayList<CarModel>> {
 		EverliveApp app = new EverliveApp("ZEW8xrnCpPDDsuQD");
 
 		@Override
 		protected ArrayList<CarModel> doInBackground(Void... params) {
-			RequestResult<ArrayList<CarModel>> result = this.app.workWith()
-					.data(CarModel.class).getAll().executeSync();
+			RequestResult<ArrayList<CarModel>> result = this.app.workWith().data(CarModel.class).getAll().executeSync();
 			if (result.getSuccess()) {
 				Log.d("SSDSDAS", "OK");
 				cars.clear();
 				for (CarModel car : result.getValue()) {
-					CarModel tempCar = new CarModel(car.getCarId(),car.getModel(),
-							car.getYear(), car.getPrice(),
-							car.getConsumption(), car.getImageUrl(),
-							car.isAvailable());
-						
+					CarModel tempCar = new CarModel(car.getCarId(), car.getModel(), car.getYear(), car.getPrice(),
+							car.getConsumption(), car.getImageUrl(), car.isAvailable());
+
 					Log.d("CARID", tempCar.getCarId().toString());
-					if(tempCar.isAvailable()){
+					if (tempCar.isAvailable()) {
 						cars.add(tempCar);
-					}
-					else {
-						if(carsIds.contains(tempCar.getCarId().toString())){
+					} else {
+						if (carsIds.contains(tempCar.getCarId().toString())) {
 							carsIds.remove(tempCar.getCarId().toString());
 							toBeNotified = true;
-						}						
+						}
 					}
-					if(cars.size() != carsCount){
+					if (cars.size() != carsCount) {
 						carsCount = cars.size();
 						toBeNotified = true;
 					}
-//					if(!(carsIds.contains(tempCar.getCarId().toString()))){
-//						carsIds.add(tempCar.getCarId().toString());
-//						toBeNotified = true;
-//					}
-//					if(carsIds.size() != carsCount){
-//						carsCount = carsIds.size();
-//						toBeNotified = true;
-//					}
+					// if(!(carsIds.contains(tempCar.getCarId().toString()))){
+					// carsIds.add(tempCar.getCarId().toString());
+					// toBeNotified = true;
+					// }
+					// if(carsIds.size() != carsCount){
+					// carsCount = carsIds.size();
+					// toBeNotified = true;
+					// }
 				}
 				return cars;
 			} else {
@@ -192,23 +190,22 @@ public void callAsynchronousTask() {
 
 		@Override
 		protected void onPostExecute(ArrayList<CarModel> cars) {
-	
+
 			ArrayList<String> tempIds = new ArrayList<String>();
 			for (CarModel car : cars) {
-				if(!(carsIds.contains(car.getCarId().toString()))){
+				if (!(carsIds.contains(car.getCarId().toString()))) {
 					toBeNotified = true;
 				}
 				tempIds.add(car.getCarId().toString());
-			}			
-			
+			}
+
 			carsIds = new ArrayList<String>(tempIds);
-			
-			if(toBeNotified){
+
+			if (toBeNotified) {
 				adapter.notifyDataSetChanged();
 			}
 			toBeNotified = false;
-			
-		}
 
+		}
 	}
 }

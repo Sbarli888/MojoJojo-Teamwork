@@ -3,13 +3,16 @@
     package="com.example.carrental"
     android:versionCode="1"
     android:versionName="1.0" >
-    
 
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="19" />
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+
+    <uses-permission android:name="android.permission.INTERNET" >
+    </uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" >
+    </uses-permission>
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -24,8 +27,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <activity android:name=".AvailableCarsActivity"></activity>
+        <activity android:name=".AvailableCarsActivity" >
+        </activity>
+        <activity
+            android:name=".CarDetailsActivity"
+            android:label="@string/title_activity_car_details" >
+        </activity>
     </application>
 
 </manifest>
