@@ -22,8 +22,8 @@ public class DbHelper extends SQLiteOpenHelper {
 	static final int VERSION = 1;
 	static final String DB_CREATE_QUERY = "CREATE TABLE "+TABLE_CARS
 			+"("+ COLUMN_ID + " integer primary key autoincrement, "+
-			COLUMN_BACKEND_ID +" text not null"+
-			COLUMN_MODEL + "text not null, "+
+			COLUMN_BACKEND_ID +" text not null, "+
+			COLUMN_MODEL + " text not null, "+
 			COLUMN_YEAR + " integer not null, "+
 			COLUMN_PRICE + " real, "+
 			COLUMN_CONSUMPTION + " real, "+
