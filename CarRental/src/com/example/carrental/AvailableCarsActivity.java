@@ -160,6 +160,7 @@ public class AvailableCarsActivity extends Activity implements OnItemLongClickLi
 				for (CarModel car : result.getValue()) {	
 					
 					UUID carId =UUID.fromString(car.getServerId().toString());
+					
 					CarModel tempCar = new CarModel(carId, car.getModel(), car.getYear(), car.getPrice(),
 							car.getConsumption(), car.getImageUrl(), car.isAvailable(), car.getLocation());
 					

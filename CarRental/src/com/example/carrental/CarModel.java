@@ -18,60 +18,71 @@ public class CarModel extends DataItem implements Parcelable{
 	@ServerProperty("Id")
 	private UUID id;
 	
+//	@ServerIgnore
+//	private UUID carId;
+	
 	@ServerIgnore
-	private UUID carId;
+	private Date modifiedAt;
+	
+	public Date getModifiedAt() {
+		return modifiedAt;
+	}
+
+	public void setModifiedAt(Date modifiedAt) {
+		modifiedAt = modifiedAt;
+	}
 
 	@ServerProperty("CarModel")
-	private String model;
+	private String CarModel;
 	
 	@ServerProperty("Year")
-	private Number year;
+	private Number Year;
 		
 	@ServerProperty("Price")
-	private Number price;
+	private Number Price;
 	
 	@ServerProperty("Consumption")
-	private Number consumption;
+	private Number Consumption;
 	
 	@ServerProperty("ImageURL")
-	private String imageUrl;
+	private String ImageURL;
 	
 	@ServerProperty("IsAvailable")
-	private boolean isAvailable;
+	private boolean IsAvailable;
 	
 	@ServerProperty("Location")
-	private String location;
+	private String Location;
 
 	@ServerProperty("ReturnDate")
-	private Date returnDate;
+	private Date ReturnDate;
 	
 
 	public CarModel(UUID carId, String model, Number year, Number price, Number consumption, String imageUrl, boolean isAvailable, String location) {
 		super();
-		this.carId = carId;
-		this.model = model;
-		this.year = year;
-		this.price = price;
-		this.consumption = consumption;
-		this.imageUrl = imageUrl;
-		this.isAvailable = isAvailable;
-		this.location = location;
+		this.id = carId;
+		this.CarModel = model;
+		this.Year = year;
+		this.Price = price;
+		this.Consumption = consumption;
+		this.ImageURL = imageUrl;
+		this.IsAvailable = isAvailable;
+		this.Location = location;
 	}
 	
 	public Date getReturnDate() {
-		return returnDate;
+		return ReturnDate;
 	}
 
 	public void setReturnDate(Date returnDate) {
-		this.returnDate = returnDate;
+		this.ReturnDate = returnDate;
 	}
 	
 	public String getModel() {
-		return model;
+		return CarModel;
 	}
 
 	public void setModel(String model) {
-		this.model = model;
+		this.CarModel = model;
 	}
 
 //	public int getYear() {
@@ -98,55 +109,56 @@ public class CarModel extends DataItem implements Parcelable{
 //		this.consumption = consumption;
 //	}
 	public Number getYear() {
-		return year;
+		return Year;
 	}
 
 	public void setYear(Number year) {
-		this.year = year;
+		this.Year = year;
 	}
 
 	public Number getPrice() {
-		return price;
+		return Price;
 	}
 
 	public void setPrice(Number price) {
-		this.price = price;
+		this.Price = price;
 	}
 
 	public Number getConsumption() {
-		return consumption;
+		return Consumption;
 	}
 
 	public void setConsumption(Number consumption) {
-		this.consumption = consumption;
+		this.Consumption = consumption;
 	}
 
 	public String getImageUrl() {
-		return imageUrl;
+		return ImageURL;
 	}
 
 	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
+		this.ImageURL = imageUrl;
 	}
 
 	public boolean isAvailable() {
-		return isAvailable;
+		return IsAvailable;
 	}
 
-	public void setAvailable(boolean isAvailable) {
-		this.isAvailable = isAvailable;
+	public CarModel setAvailable(boolean isAvailable) {
+		this.IsAvailable = isAvailable;
+		return this;
 	}
 	
 	public UUID getCarId() {
-		return carId;
+		return id;
 	}
 
 	public String getLocation() {
-		return location;
+		return Location;
 	}
 
 	public void setLocation(String location) {
-		this.location = location;
+		this.Location = location;
 	}
 
 //Make parcelable
@@ -170,21 +182,21 @@ public class CarModel extends DataItem implements Parcelable{
 	}
 
 	private void readFromParcel(Parcel in) {		
-		this.carId = UUID.fromString(in.readString());
-		this.model = in.readString();
-		this.year = in.readInt();
-		this.price = in.readDouble();
-		this.consumption = in.readDouble();
-		this.imageUrl = in.readString();
+		this.id = UUID.fromString(in.readString());
+		this.CarModel = in.readString();
+		this.Year = in.readInt();
+		this.Price = in.readDouble();
+		this.Consumption = in.readDouble();
+		this.ImageURL = in.readString();
 	}
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeString(carId.toString());
-		dest.writeString(model);
-		dest.writeInt(year.intValue());
-		dest.writeDouble(price.doubleValue());
-		dest.writeDouble(consumption.doubleValue());
-		dest.writeString(imageUrl);
+		dest.writeString(id.toString());
+		dest.writeString(CarModel);
+		dest.writeInt(Year.intValue());
+		dest.writeDouble(Price.doubleValue());
+		dest.writeDouble(Consumption.doubleValue());
+		dest.writeString(ImageURL);
 	}
 }

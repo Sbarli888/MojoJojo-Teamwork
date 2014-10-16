@@ -3,6 +3,8 @@ package com.example.carrental;
 import java.util.ArrayList;
 
 
+import java.util.UUID;
+
 import com.example.database.CarsData;
 //import com.example.database.CarsData;
 import com.telerik.everlive.sdk.core.EverliveApp;
@@ -93,12 +95,22 @@ public class CarDetailsActivity extends ActionBarActivity implements OnClickList
 
 	private void rentCurrentCar() {
 		
+		//car.setAvailable(false);
 //		RequestResult carToUpdateRequest = app.workWith().data(CarModel.class).getById(car.getCarId()).executeSync();
 //		CarModel carToUpdate = (CarModel) carToUpdateRequest.getValue();
-//		carToUpdate.setAvailable(false);
 //
 //		app.workWith().data(CarModel.class).update(carToUpdate).executeAsync();
-//		app.workWith().data(CarModel.class).updateById(car.getCarId(), (UpdatableItem) car).executeAsync();
+//		CarModel carToSend = new CarModel
+		//RequestResult<CarModel> tempCar = app.workWith().data(CarModel.class).getById(car.getId()).executeSync();
+		// carToUpdate = (CarModel)tempCar.getValue();
+		//carToUpdate.setAvailable(false);
+		//app.workWith().data(CarModel.class).update(carToUpdate).executeAsync();
+		
+		CarModel carToUpdate = new CarModel(car.getCarId(),
+				car.getModel(), car.getYear(), car.getPrice(), car.getConsumption(), car.getImageUrl(), 
+				false, car.getLocation());
+		
+		app.workWith().data(CarModel.class).updateById(car.getCarId(), carToUpdate).executeAsync();
 		
 		
 		carsDb = new CarsData(getApplicationContext());
