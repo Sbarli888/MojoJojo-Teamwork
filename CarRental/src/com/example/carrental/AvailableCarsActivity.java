@@ -16,6 +16,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -48,12 +50,12 @@ public class AvailableCarsActivity extends Activity implements OnItemLongClickLi
 	private int carsCount;
 
 	Handler handler;
-	
+
 	private SensorManager mSensorManager;
 	private float mAccel; // acceleration apart from gravity
 	private float mAccelCurrent; // current acceleration including gravity
 	private float mAccelLast; // last acceleration including gravity
-	
+
 	private final SensorEventListener mSensorListener = new SensorEventListener() {
 
 		public void onSensorChanged(SensorEvent se) {
@@ -68,15 +70,13 @@ public class AvailableCarsActivity extends Activity implements OnItemLongClickLi
 			if (mAccel > 10) {
 
 				AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
-				
+
 				dialog.setTitle("Exit Application");
 				dialog.setMessage("Do you want to exit ?");
 				dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						finish();
 						System.exit(0);
-						
 					}
 				});
 				dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -86,7 +86,7 @@ public class AvailableCarsActivity extends Activity implements OnItemLongClickLi
 						toast.show();
 					}
 				});
-				
+
 				dialog.create().show();
 
 			}
@@ -96,9 +96,9 @@ public class AvailableCarsActivity extends Activity implements OnItemLongClickLi
 		}
 
 	};
-	
+
 	@Override
-	protected void onDestroy(){
+	protected void onDestroy() {
 		System.exit(0);
 		super.onDestroy();
 	}
@@ -113,8 +113,8 @@ public class AvailableCarsActivity extends Activity implements OnItemLongClickLi
 	@Override
 	protected void onPause() {
 		mSensorManager.unregisterListener(mSensorListener);
+		super.onPause();
 	}
-		
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -122,6 +122,8 @@ public class AvailableCarsActivity extends Activity implements OnItemLongClickLi
 		setContentView(R.layout.activity_available_cars);
 		initializeElements();
 		setActionBar();
+
+		Toast.makeText(mContext, "Please wait, loading ... \nLong Press on item for details", Toast.LENGTH_LONG).show();
 
 		adapter = new CarAdapter(mContext, cars);
 
@@ -148,7 +150,7 @@ public class AvailableCarsActivity extends Activity implements OnItemLongClickLi
 		toBeNotified = true;
 		carsIds = new ArrayList<String>();
 		carsCount = 0;
-		
+
 		mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
 				SensorManager.SENSOR_DELAY_NORMAL);
@@ -207,10 +209,16 @@ public class AvailableCarsActivity extends Activity implements OnItemLongClickLi
 				handler.post(new Runnable() {
 					public void run() {
 						try {
-							ListviewUpdater performBackgroundTask = new ListviewUpdater();
+							if(isNetworkConnected()){
+								ListviewUpdater performBackgroundTask = new ListviewUpdater();
+
+								performBackgroundTask.execute();
+							}else {
+								Toast.makeText(mContext, "Check your internet connection!", Toast.LENGTH_SHORT).show();
+							}
+							
 							// PerformBackgroundTask this class is the class
 							// that extends AsynchTask
-							performBackgroundTask.execute();
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
 						}
@@ -227,55 +235,63 @@ public class AvailableCarsActivity extends Activity implements OnItemLongClickLi
 
 		@Override
 		protected ArrayList<CarModel> doInBackground(Void... params) {
-			RequestResult<ArrayList<CarModel>> result = this.app.workWith().data(CarModel.class).getAll().executeSync();
-			if (result.getSuccess()) {
-				Log.d("SSDSDAS", "OK");
-				cars.clear();
-				for (CarModel car : result.getValue()) {	
-					
-					UUID carId =UUID.fromString(car.getServerId().toString());
-					
-					CarModel tempCar = new CarModel(carId, car.getModel(), car.getYear(), car.getPrice(),
-							car.getConsumption(), car.getImageUrl(), car.isAvailable(), car.getLocation());
-					
-					Log.d("CARID", tempCar.getCarId().toString());
-					if (tempCar.isAvailable()) {
-						cars.add(tempCar);
-					} else {
-						if (carsIds.contains(tempCar.getCarId().toString())) {
-							carsIds.remove(tempCar.getCarId().toString());
+			if(isNetworkConnected()){
+				RequestResult<ArrayList<CarModel>> result = this.app.workWith().data(CarModel.class).getAll().executeSync();
+				if (result.getSuccess()) {
+					Log.d("SSDSDAS", "OK");
+					cars.clear();
+					for (CarModel car : result.getValue()) {
+
+						UUID carId = UUID.fromString(car.getServerId().toString());
+
+						CarModel tempCar = new CarModel(carId, car.getModel(), car.getYear(), car.getPrice(),
+								car.getConsumption(), car.getImageUrl(), car.isAvailable(), car.getLocation());
+
+						Log.d("CARID", tempCar.getCarId().toString());
+						if (tempCar.isAvailable()) {
+							cars.add(tempCar);
+						} else {
+							if (carsIds.contains(tempCar.getCarId().toString())) {
+								carsIds.remove(tempCar.getCarId().toString());
+								toBeNotified = true;
+							}
+						}
+						if (cars.size() != carsCount) {
+							carsCount = cars.size();
 							toBeNotified = true;
 						}
 					}
-					if (cars.size() != carsCount) {
-						carsCount = cars.size();
-						toBeNotified = true;
-					}
+					return cars;
+				} else {
+					Log.d("SSDSDAS", "fail");
 				}
-				return cars;
-			} else {
-				Log.d("SSDSDAS", "fail");
 			}
+			
 			return null;
 		}
 
 		@Override
 		protected void onPostExecute(ArrayList<CarModel> cars) {
 
-			ArrayList<String> tempIds = new ArrayList<String>();
-			for (CarModel car : cars) {
-				if (!(carsIds.contains(car.getCarId().toString()))) {
-					toBeNotified = true;
+			if(isNetworkConnected()){
+				ArrayList<String> tempIds = new ArrayList<String>();
+				for (CarModel car : cars) {
+					if (!(carsIds.contains(car.getCarId().toString()))) {
+						toBeNotified = true;
+					}
+					tempIds.add(car.getCarId().toString());
 				}
-				tempIds.add(car.getCarId().toString());
-			}
 
-			carsIds = new ArrayList<String>(tempIds);
+				carsIds = new ArrayList<String>(tempIds);
 
-			if (toBeNotified) {
-				adapter.notifyDataSetChanged();
+				if (toBeNotified) {
+					adapter.notifyDataSetChanged();
+				}
+				toBeNotified = false;
+			} else {
+				Toast.makeText(mContext, "Check connection", Toast.LENGTH_SHORT).show();
 			}
-			toBeNotified = false;
+			
 
 		}
 	}
@@ -283,12 +299,22 @@ public class AvailableCarsActivity extends Activity implements OnItemLongClickLi
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	private boolean isNetworkConnected() {
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo ni = cm.getActiveNetworkInfo();
+		if (ni == null) {
+			// There are no active networks.
+			return false;
+		} else
+			return true;
 	}
 }

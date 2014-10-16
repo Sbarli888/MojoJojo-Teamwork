@@ -1,20 +1,8 @@
 package com.example.carrental;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
-import com.example.database.CarsData;
-//import com.example.database.CarsData;
-import com.telerik.everlive.sdk.core.EverliveApp;
-import com.telerik.everlive.sdk.core.interfaces.UpdatableItem;
-import com.telerik.everlive.sdk.core.result.RequestResult;
-
-import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.ResultReceiver;
-import android.util.Log;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +11,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.database.CarsData;
+//import com.example.database.CarsData;
+import com.telerik.everlive.sdk.core.EverliveApp;
+import com.telerik.everlive.sdk.core.result.RequestResult;
 
 public class CarDetailsActivity extends ActionBarActivity implements OnClickListener {
 
@@ -52,6 +45,7 @@ public class CarDetailsActivity extends ActionBarActivity implements OnClickList
 		rentBtn = (Button) findViewById(R.id.btn_rent);
 
 		rentBtn.setOnClickListener(this);
+
 	}
 
 	private void initializeObjects() {
@@ -89,17 +83,16 @@ public class CarDetailsActivity extends ActionBarActivity implements OnClickList
 
 	private void rentCurrentCar() {
 
-		
-			CarModel carToUpdate = new CarModel(car.getCarId(), car.getModel(), car.getYear(), car.getPrice(),
-					car.getConsumption(), car.getImageUrl(), false, car.getLocation());
+		CarModel carToUpdate = new CarModel(car.getCarId(), car.getModel(), car.getYear(), car.getPrice(),
+				car.getConsumption(), car.getImageUrl(), false, car.getLocation());
 
-			app.workWith().data(CarModel.class).updateById(car.getCarId(), carToUpdate).executeAsync();
+		app.workWith().data(CarModel.class).updateById(car.getCarId(), carToUpdate).executeAsync();
 
-			carsDb = new CarsData(getApplicationContext());
-			carsDb.addCar(car);
-			Toast.makeText(getApplicationContext(), "Rented Successful!", Toast.LENGTH_SHORT).show();
-
-		
+		carsDb = new CarsData(getApplicationContext());
+		carsDb.addCar(car);
+		Toast.makeText(getApplicationContext(), "Rented Successful!", Toast.LENGTH_SHORT).show();
 
 	}
+	
+	
 }
