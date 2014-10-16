@@ -88,18 +88,31 @@ public class CarDetailsActivity extends ActionBarActivity implements OnClickList
 	}
 
 	private void rentCurrentCar() {
+		Toast.makeText(getApplicationContext(), "Please wait..", Toast.LENGTH_SHORT).show();
+		tempCar = null;
+		RequestResult<ArrayList<CarModel>> result = this.app.workWith().data(CarModel.class).getAll().executeSync();
+		if (result.getSuccess()) {
+			for (CarModel resultCar : result.getValue()) {
 
-		
-			CarModel carToUpdate = new CarModel(car.getCarId(), car.getModel(), car.getYear(), car.getPrice(),
-					car.getConsumption(), car.getImageUrl(), false, car.getLocation());
+				if (car.getCarId() == resultCar.getCarId()) {
+					if (car.isAvailable()) {
+						CarModel carToUpdate = new CarModel(car.getCarId(), car.getModel(), car.getYear(),
+								car.getPrice(), car.getConsumption(), car.getImageUrl(), false, car.getLocation());
 
-			app.workWith().data(CarModel.class).updateById(car.getCarId(), carToUpdate).executeAsync();
+						app.workWith().data(CarModel.class).updateById(car.getCarId(), carToUpdate).executeAsync();
 
-			carsDb = new CarsData(getApplicationContext());
-			carsDb.addCar(car);
-			Toast.makeText(getApplicationContext(), "Rented Successful!", Toast.LENGTH_SHORT).show();
+						carsDb = new CarsData(getApplicationContext());
+						carsDb.addCar(car);
+						Toast.makeText(getApplicationContext(), "Rented Successful!", Toast.LENGTH_SHORT).show();
+						
+					} else {
+						Toast.makeText(getApplicationContext(), "Car is already rented", Toast.LENGTH_SHORT).show();
+					}
+					break;
+				}
 
-		
+			}
+		}
 
 	}
 }

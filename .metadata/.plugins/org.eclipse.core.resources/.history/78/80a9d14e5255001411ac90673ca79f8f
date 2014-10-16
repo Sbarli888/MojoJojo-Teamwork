@@ -89,7 +89,11 @@ public class CarDetailsActivity extends ActionBarActivity implements OnClickList
 
 	private void rentCurrentCar() {
 
-		
+		RequestResult result;
+		result = app.workWith().data(CarModel.class).getById(car.getCarId()).executeSync();
+
+		if (((CarModel) result.getValue()).isAvailable()) {
+
 			CarModel carToUpdate = new CarModel(car.getCarId(), car.getModel(), car.getYear(), car.getPrice(),
 					car.getConsumption(), car.getImageUrl(), false, car.getLocation());
 
@@ -99,7 +103,9 @@ public class CarDetailsActivity extends ActionBarActivity implements OnClickList
 			carsDb.addCar(car);
 			Toast.makeText(getApplicationContext(), "Rented Successful!", Toast.LENGTH_SHORT).show();
 
-		
+		} else {
+			Toast.makeText(getApplicationContext(), "Car is already rented", Toast.LENGTH_SHORT).show();
+		}
 
 	}
 }

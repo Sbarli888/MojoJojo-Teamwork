@@ -279,16 +279,4 @@ public class AvailableCarsActivity extends Activity implements OnItemLongClickLi
 
 		}
 	}
-
-	@Override
-	public void onSensorChanged(SensorEvent event) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onAccuracyChanged(Sensor sensor, int accuracy) {
-		// TODO Auto-generated method stub
-		
-	}
 }
