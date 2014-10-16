@@ -1,48 +1,53 @@
 package com.example.carrental;
 
 
+import java.sql.Date;
 import java.util.UUID;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Base64;
 
-import com.telerik.everlive.sdk.core.handlers.FilesHandler;
-import com.telerik.everlive.sdk.core.model.system.File;
-import com.telerik.everlive.sdk.core.query.definition.FileField;
+import com.telerik.everlive.sdk.core.model.base.DataItem;
 import com.telerik.everlive.sdk.core.serialization.ServerIgnore;
 import com.telerik.everlive.sdk.core.serialization.ServerProperty;
 import com.telerik.everlive.sdk.core.serialization.ServerType;
 
 @ServerType("Cars")
-public class CarModel implements Parcelable{
+public class CarModel extends DataItem implements Parcelable{
 
 	@ServerProperty("Id")
+	private UUID id;
+	
+	@ServerIgnore
 	private UUID carId;
+
 	@ServerProperty("CarModel")
 	private String model;
+	
 	@ServerProperty("Year")
-	private int year;
+	private Number year;
+		
 	@ServerProperty("Price")
-	private double price;
+	private Number price;
+	
 	@ServerProperty("Consumption")
-	private double consumption;
+	private Number consumption;
+	
 	@ServerProperty("ImageURL")
 	private String imageUrl;
+	
 	@ServerProperty("IsAvailable")
 	private boolean isAvailable;
+	
 	@ServerProperty("Location")
 	private String location;
 
-	public String getLocation() {
-		return location;
-	}
+	@ServerProperty("ReturnDate")
+	private Date returnDate;
+	
 
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
-	public CarModel(UUID carId, String model, int year, double price, double consumption, String imageUrl, boolean isAvailable) {
+	public CarModel(UUID carId, String model, Number year, Number price, Number consumption, String imageUrl, boolean isAvailable, String location) {
+		super();
 		this.carId = carId;
 		this.model = model;
 		this.year = year;
@@ -50,6 +55,15 @@ public class CarModel implements Parcelable{
 		this.consumption = consumption;
 		this.imageUrl = imageUrl;
 		this.isAvailable = isAvailable;
+		this.location = location;
+	}
+	
+	public Date getReturnDate() {
+		return returnDate;
+	}
+
+	public void setReturnDate(Date returnDate) {
+		this.returnDate = returnDate;
 	}
 	
 	public String getModel() {
@@ -60,27 +74,50 @@ public class CarModel implements Parcelable{
 		this.model = model;
 	}
 
-	public int getYear() {
+//	public int getYear() {
+//		return year;
+//	}
+//
+//	public void setYear(int year) {
+//		this.year = year;
+//	}
+//
+//	public double getPrice() {
+//		return price;
+//	}
+//
+//	public void setPrice(double price) {
+//		this.price = price;
+//	}
+//
+//	public double getConsumption() {
+//		return consumption;
+//	}
+//
+//	public void setConsumption(double consumption) {
+//		this.consumption = consumption;
+//	}
+	public Number getYear() {
 		return year;
 	}
 
-	public void setYear(int year) {
+	public void setYear(Number year) {
 		this.year = year;
 	}
 
-	public double getPrice() {
+	public Number getPrice() {
 		return price;
 	}
 
-	public void setPrice(double price) {
+	public void setPrice(Number price) {
 		this.price = price;
 	}
 
-	public double getConsumption() {
+	public Number getConsumption() {
 		return consumption;
 	}
 
-	public void setConsumption(double consumption) {
+	public void setConsumption(Number consumption) {
 		this.consumption = consumption;
 	}
 
@@ -104,14 +141,14 @@ public class CarModel implements Parcelable{
 		return carId;
 	}
 
-	
-	@Override
-	public int describeContents() {
-		// TODO Auto-generated method stub
-		return 0;
+	public String getLocation() {
+		return location;
 	}
 
-	
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
 //Make parcelable
 	public static final Parcelable.Creator<CarModel> CREATOR = new Parcelable.Creator<CarModel>() {
 		public CarModel createFromParcel(Parcel in) {
@@ -122,7 +159,12 @@ public class CarModel implements Parcelable{
 			return new CarModel[size];
 		}
 	};
-
+	
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+	
 	public CarModel(Parcel in) {
 		readFromParcel(in);
 	}
@@ -140,12 +182,9 @@ public class CarModel implements Parcelable{
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeString(carId.toString());
 		dest.writeString(model);
-		dest.writeInt(year);
-		dest.writeDouble(price);
-		dest.writeDouble(consumption);
+		dest.writeInt(year.intValue());
+		dest.writeDouble(price.doubleValue());
+		dest.writeDouble(consumption.doubleValue());
 		dest.writeString(imageUrl);
 	}
-
-
-
 }

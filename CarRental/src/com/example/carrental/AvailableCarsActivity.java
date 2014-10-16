@@ -27,6 +27,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.telerik.everlive.sdk.core.EverliveApp;
+import com.telerik.everlive.sdk.core.model.base.DataItem;
+import com.telerik.everlive.sdk.core.model.base.ItemBase;
 import com.telerik.everlive.sdk.core.result.RequestResult;
 import com.telerik.everlive.sdk.core.result.RequestResultCallbackAction;
 
@@ -91,7 +93,7 @@ public class AvailableCarsActivity extends Activity implements OnItemLongClickLi
 		intent.putExtra("SelectedCar", selectedCar);
 		this.startActivity(intent);
 
-		
+		Log.d("CAR_IN_SQLITE", "URL = " + car.getImageUrl());
 		// callAsynchronousTask();
 		return true;
 	}
@@ -155,10 +157,12 @@ public class AvailableCarsActivity extends Activity implements OnItemLongClickLi
 			if (result.getSuccess()) {
 				Log.d("SSDSDAS", "OK");
 				cars.clear();
-				for (CarModel car : result.getValue()) {
-					CarModel tempCar = new CarModel(car.getCarId(), car.getModel(), car.getYear(), car.getPrice(),
-							car.getConsumption(), car.getImageUrl(), car.isAvailable());
-
+				for (CarModel car : result.getValue()) {	
+					
+					UUID carId =UUID.fromString(car.getServerId().toString());
+					CarModel tempCar = new CarModel(carId, car.getModel(), car.getYear(), car.getPrice(),
+							car.getConsumption(), car.getImageUrl(), car.isAvailable(), car.getLocation());
+					
 					Log.d("CARID", tempCar.getCarId().toString());
 					if (tempCar.isAvailable()) {
 						cars.add(tempCar);

@@ -36,9 +36,9 @@ public class CarsData {
 		ContentValues dataRow = new ContentValues();
 		dataRow.put(DbHelper.COLUMN_BACKEND_ID, car.getCarId().toString());
 		dataRow.put(DbHelper.COLUMN_MODEL, car.getModel());
-		dataRow.put(DbHelper.COLUMN_YEAR, car.getYear());
-		dataRow.put(DbHelper.COLUMN_PRICE, car.getPrice());
-		dataRow.put(DbHelper.COLUMN_CONSUMPTION, car.getConsumption());
+		dataRow.put(DbHelper.COLUMN_YEAR, car.getYear().intValue());
+		dataRow.put(DbHelper.COLUMN_PRICE, car.getPrice().doubleValue());
+		dataRow.put(DbHelper.COLUMN_CONSUMPTION, car.getConsumption().doubleValue());
 		dataRow.put(DbHelper.COLUMN_IMAGE_URL, car.getImageUrl());
 		dataRow.put(DbHelper.COLUMN_LOCATION, car.getLocation());
 
@@ -58,14 +58,14 @@ public class CarsData {
 
 			UUID uuId = UUID.fromString(result.getString(result.getColumnIndex(DbHelper.COLUMN_BACKEND_ID)));
 			String model = result.getString(result.getColumnIndex(DbHelper.COLUMN_MODEL));
-			int year = Integer.parseInt(result.getString(result.getColumnIndex(DbHelper.COLUMN_YEAR)));
-			double price = Double.parseDouble(result.getString(result.getColumnIndex(DbHelper.COLUMN_PRICE)));
-			double consumption = Double.parseDouble(result.getString(result.getColumnIndex(DbHelper.COLUMN_CONSUMPTION)));
+			Number year = Integer.parseInt(result.getString(result.getColumnIndex(DbHelper.COLUMN_YEAR)));
+			Number price = Double.parseDouble(result.getString(result.getColumnIndex(DbHelper.COLUMN_PRICE)));
+			Number consumption = Double.parseDouble(result.getString(result.getColumnIndex(DbHelper.COLUMN_CONSUMPTION)));
 			String url = result.getString(result.getColumnIndex(DbHelper.COLUMN_IMAGE_URL));
 			String location = result.getString(result.getColumnIndex(DbHelper.COLUMN_LOCATION));
 
-			CarModel newCar = new CarModel(uuId, model, year, price, consumption, url, false);
-			newCar.setLocation(location);
+			CarModel newCar = new CarModel(uuId, model, year, price, consumption, url, false, location);
+
 			cars.add(newCar);
 			result.moveToNext();
 		}

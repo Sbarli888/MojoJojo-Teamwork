@@ -2,7 +2,9 @@ package com.example.carrental;
 
 import java.util.ArrayList;
 
+
 import com.example.database.CarsData;
+//import com.example.database.CarsData;
 import com.telerik.everlive.sdk.core.EverliveApp;
 import com.telerik.everlive.sdk.core.interfaces.UpdatableItem;
 import com.telerik.everlive.sdk.core.result.RequestResult;
@@ -42,9 +44,9 @@ public class CarDetailsActivity extends ActionBarActivity implements OnClickList
 		
 		new ImageDownloaderTask(carImage).execute(car.getImageUrl());
 		model.append(car.getModel());
-		consumption.append(Double.toString(car.getConsumption()));
-		year.append(Integer.toString(car.getYear()));
-		price.append(Double.toString(car.getPrice()));
+		consumption.append(String.valueOf(car.getConsumption()));
+		year.append(String.valueOf(car.getYear()));
+		price.append(String.valueOf(car.getPrice()));
 		rentBtn = (Button) findViewById(R.id.btn_rent);
 		
 		rentBtn.setOnClickListener(this);
@@ -97,9 +99,10 @@ public class CarDetailsActivity extends ActionBarActivity implements OnClickList
 //
 //		app.workWith().data(CarModel.class).update(carToUpdate).executeAsync();
 //		app.workWith().data(CarModel.class).updateById(car.getCarId(), (UpdatableItem) car).executeAsync();
+		
+		
 		carsDb = new CarsData(getApplicationContext());
-		carsDb.addCar(car);
-				
+		carsDb.addCar(car);				
 		
 		//for test only
 		ArrayList<CarModel> carsInDb = (ArrayList<CarModel>) carsDb.getAllRentedCars();
