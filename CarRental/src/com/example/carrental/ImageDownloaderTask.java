@@ -44,7 +44,7 @@ class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
 					imageView.setImageBitmap(bitmap);
 				} else {
 					imageView.setImageDrawable(imageView.getContext().getResources()
-							.getDrawable(R.drawable.default_car));
+							.getDrawable(R.drawable.car_icon));
 				}
 			}
 

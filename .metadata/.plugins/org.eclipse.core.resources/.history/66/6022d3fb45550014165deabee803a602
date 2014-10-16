@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">CarRental</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_logout">Logout</string>
+    <string name="title_activity_car_details">CarDetails</string>
+    <string name="title_activity_rented_cars">Rented Cars</string>
+    <string name="car_model">Model: </string>
+    <string name="car_consumption">Consumption: </string>
+    <string name="car_year">Year: </string>
+    <string name="car_price">Price: </string>
+    <string name="car_share">Share</string>
+    <string name="car_rent">Rent</string>
+
+</resources>

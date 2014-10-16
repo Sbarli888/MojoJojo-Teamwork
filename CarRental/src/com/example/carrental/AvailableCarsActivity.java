@@ -177,14 +177,6 @@ public class AvailableCarsActivity extends Activity implements OnItemLongClickLi
 						carsCount = cars.size();
 						toBeNotified = true;
 					}
-					// if(!(carsIds.contains(tempCar.getCarId().toString()))){
-					// carsIds.add(tempCar.getCarId().toString());
-					// toBeNotified = true;
-					// }
-					// if(carsIds.size() != carsCount){
-					// carsCount = carsIds.size();
-					// toBeNotified = true;
-					// }
 				}
 				return cars;
 			} else {

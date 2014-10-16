@@ -1,8 +1,6 @@
 package com.example.carrental;
 
 import java.util.ArrayList;
-
-
 import java.util.UUID;
 
 import com.example.database.CarsData;
@@ -14,6 +12,8 @@ import com.telerik.everlive.sdk.core.result.RequestResult;
 import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,8 +22,9 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class CarDetailsActivity extends ActionBarActivity implements OnClickListener{
+public class CarDetailsActivity extends ActionBarActivity implements OnClickListener {
 
 	TextView model, price, year, consumption;
 	ImageView carImage;
@@ -31,41 +32,38 @@ public class CarDetailsActivity extends ActionBarActivity implements OnClickList
 	CarsData carsDb;
 	CarModel car;
 	EverliveApp app;
+	RequestResult<CarModel> tempCar;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_car_details);
-		
+
 		Intent selectedCarData = this.getIntent();
-		  car = selectedCarData.getExtras()
-				.getParcelable("SelectedCar");
-		
-		  initializeObjects();
-		
-		
+		car = selectedCarData.getExtras().getParcelable("SelectedCar");
+
+		initializeObjects();
+
 		new ImageDownloaderTask(carImage).execute(car.getImageUrl());
 		model.append(car.getModel());
-		consumption.append(String.valueOf(car.getConsumption()));
+		consumption.append(String.valueOf(car.getConsumption()) + " litres/100km");
 		year.append(String.valueOf(car.getYear()));
-		price.append(String.valueOf(car.getPrice()));
+		price.append(String.valueOf(car.getPrice()) + " $/day");
 		rentBtn = (Button) findViewById(R.id.btn_rent);
-		
+
 		rentBtn.setOnClickListener(this);
-//		Log.d("CAR", "UUID: "+car.getCarId().toString());
-//		Log.d("CAR", "URL: "+car.getImageUrl());
 	}
 
-	private void initializeObjects(){
+	private void initializeObjects() {
 		model = (TextView) findViewById(R.id.tv_car_model);
 		consumption = (TextView) findViewById(R.id.tv_car_consumption);
 		year = (TextView) findViewById(R.id.tv_car_year);
 		price = (TextView) findViewById(R.id.tv_car_price);
 		carImage = (ImageView) findViewById(R.id.car_image);
-		
+
 		app = new EverliveApp("ZEW8xrnCpPDDsuQD");
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -75,9 +73,6 @@ public class CarDetailsActivity extends ActionBarActivity implements OnClickList
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			return true;
@@ -85,42 +80,39 @@ public class CarDetailsActivity extends ActionBarActivity implements OnClickList
 		return super.onOptionsItemSelected(item);
 	}
 
-	
 	@Override
 	public void onClick(View v) {
-		if (v.getId()==R.id.btn_rent) {
+		if (v.getId() == R.id.btn_rent) {
 			rentCurrentCar();
 		}
 	}
 
 	private void rentCurrentCar() {
-		
-		//car.setAvailable(false);
-//		RequestResult carToUpdateRequest = app.workWith().data(CarModel.class).getById(car.getCarId()).executeSync();
-//		CarModel carToUpdate = (CarModel) carToUpdateRequest.getValue();
-//
-//		app.workWith().data(CarModel.class).update(carToUpdate).executeAsync();
-//		CarModel carToSend = new CarModel
-		//RequestResult<CarModel> tempCar = app.workWith().data(CarModel.class).getById(car.getId()).executeSync();
-		// carToUpdate = (CarModel)tempCar.getValue();
-		//carToUpdate.setAvailable(false);
-		//app.workWith().data(CarModel.class).update(carToUpdate).executeAsync();
-		
-		CarModel carToUpdate = new CarModel(car.getCarId(),
-				car.getModel(), car.getYear(), car.getPrice(), car.getConsumption(), car.getImageUrl(), 
-				false, car.getLocation());
-		
-		app.workWith().data(CarModel.class).updateById(car.getCarId(), carToUpdate).executeAsync();
-		
-		
-		carsDb = new CarsData(getApplicationContext());
-		carsDb.addCar(car);				
-		
-		//for test only
-		ArrayList<CarModel> carsInDb = (ArrayList<CarModel>) carsDb.getAllRentedCars();
-		for (CarModel car : carsInDb) {
-			
-			Log.d("CAR_IN_SQLITE", "ID="+car.getModel());
+		Toast.makeText(getApplicationContext(), "Please wait..", Toast.LENGTH_SHORT).show();
+		tempCar = null;
+		RequestResult<ArrayList<CarModel>> result = this.app.workWith().data(CarModel.class).getAll().executeSync();
+		if (result.getSuccess()) {
+			for (CarModel resultCar : result.getValue()) {
+
+				if (car.getCarId() == resultCar.getCarId()) {
+					if (car.isAvailable()) {
+						CarModel carToUpdate = new CarModel(car.getCarId(), car.getModel(), car.getYear(),
+								car.getPrice(), car.getConsumption(), car.getImageUrl(), false, car.getLocation());
+
+						app.workWith().data(CarModel.class).updateById(car.getCarId(), carToUpdate).executeAsync();
+
+						carsDb = new CarsData(getApplicationContext());
+						carsDb.addCar(car);
+						Toast.makeText(getApplicationContext(), "Rented Successful!", Toast.LENGTH_SHORT).show();
+						
+					} else {
+						Toast.makeText(getApplicationContext(), "Car is already rented", Toast.LENGTH_SHORT).show();
+					}
+					break;
+				}
+
+			}
 		}
+
 	}
 }

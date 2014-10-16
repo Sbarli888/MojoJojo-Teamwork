@@ -61,7 +61,7 @@ public class CarAdapter extends BaseAdapter {
 		CarModel carItem = (CarModel) listData.get(position);
 
 		holder.model.setText(carItem.getModel());
-		holder.price.setText(String.valueOf(carItem.getPrice()));
+		holder.price.setText(String.valueOf(carItem.getPrice()) + " $/day");
 
 		if (holder.listImage != null) {
 			new ImageDownloaderTask(holder.listImage).execute(carItem.getImageUrl());
