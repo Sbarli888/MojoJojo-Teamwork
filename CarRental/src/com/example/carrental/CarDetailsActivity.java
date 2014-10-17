@@ -149,7 +149,7 @@ public class CarDetailsActivity extends ActionBarActivity implements OnClickList
 			if (FacebookDialog.canPresentShareDialog(getApplicationContext(),
 					FacebookDialog.ShareDialogFeature.SHARE_DIALOG)) {
 				FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(activity)
-						.setApplicationName("CarRentalTLRK").setCaption("caption").setDescription(car.getModel())
+						.setApplicationName("CarRentalTLRK").setCaption("I am really impressed by "+car.getModel()).setDescription(car.getModel())
 						.setLink(car.getImageUrl()).build();
 				uiHelper.trackPendingDialogCall(shareDialog.present());
 			} else {
