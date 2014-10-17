@@ -13,6 +13,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" >
     </uses-permission>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -33,6 +35,21 @@
         <activity
             android:name=".CarDetailsActivity"
             android:label="@string/title_activity_car_details" >
+        </activity>
+
+        <service android:name="com.example.background_geolocator.GeolocationService" />
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
+        <activity
+            android:name=".ReturnCarActivity"
+            android:label="@string/title_activity_return_car" >
+        </activity>
+        <activity
+            android:name=".RentedCarsActivity"
+            android:label="@string/title_activity_rented_cars" >
         </activity>
     </application>
 

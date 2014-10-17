@@ -1,8 +1,10 @@
 package com.example.carrental;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.database.CarsData;
+import com.facebook.UiLifecycleHelper;
+import com.facebook.widget.FacebookDialog;
 //import com.example.database.CarsData;
 import com.telerik.everlive.sdk.core.EverliveApp;
 import com.telerik.everlive.sdk.core.result.RequestResult;
@@ -27,6 +31,9 @@ public class CarDetailsActivity extends ActionBarActivity implements OnClickList
 	EverliveApp app;
 	RequestResult<CarModel> tempCar;
 
+	private UiLifecycleHelper uiHelper;
+	private Activity activity = this;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -34,6 +41,9 @@ public class CarDetailsActivity extends ActionBarActivity implements OnClickList
 
 		Intent selectedCarData = this.getIntent();
 		car = selectedCarData.getExtras().getParcelable("SelectedCar");
+
+		uiHelper = new UiLifecycleHelper(this, null);
+		uiHelper.onCreate(savedInstanceState);
 
 		initializeObjects();
 
@@ -43,8 +53,62 @@ public class CarDetailsActivity extends ActionBarActivity implements OnClickList
 		year.append(String.valueOf(car.getYear()));
 		price.append(String.valueOf(car.getPrice()) + " $/day");
 		rentBtn = (Button) findViewById(R.id.btn_rent);
+		shareBtn = (Button) findViewById(R.id.btn_share);
 
 		rentBtn.setOnClickListener(this);
+		shareBtn.setOnClickListener(this);
+
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		uiHelper.onActivityResult(requestCode, resultCode, data, new FacebookDialog.Callback() {
+			@Override
+			public void onError(FacebookDialog.PendingCall pendingCall, Exception error, Bundle data) {
+				Log.e("Activity", String.format("Error: %s", error.toString()));
+			}
+
+			@Override
+			public void onComplete(FacebookDialog.PendingCall pendingCall, Bundle data) {
+				Log.i("Activity", "Success!");
+			}
+		});
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (uiHelper != null) {
+			uiHelper.onResume();
+		}
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		if (uiHelper != null) {
+			uiHelper.onSaveInstanceState(outState);
+		}
+
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		if (uiHelper != null) {
+			uiHelper.onPause();
+		}
+
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (uiHelper != null) {
+			uiHelper.onDestroy();
+		}
 
 	}
 
@@ -78,6 +142,19 @@ public class CarDetailsActivity extends ActionBarActivity implements OnClickList
 	public void onClick(View v) {
 		if (v.getId() == R.id.btn_rent) {
 			rentCurrentCar();
+			Intent backToAllCars = new Intent(CarDetailsActivity.this, AvailableCarsActivity.class);
+			startActivity(backToAllCars);
+		}
+		if (v.getId() == R.id.btn_share) {
+			if (FacebookDialog.canPresentShareDialog(getApplicationContext(),
+					FacebookDialog.ShareDialogFeature.SHARE_DIALOG)) {
+				FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(activity)
+						.setApplicationName("CarRentalTLRK").setCaption("caption").setDescription(car.getModel())
+						.setLink(car.getImageUrl()).build();
+				uiHelper.trackPendingDialogCall(shareDialog.present());
+			} else {
+				Toast.makeText(getApplicationContext(), "No FB app installed", Toast.LENGTH_SHORT).show();
+			}
 		}
 	}
 
@@ -93,6 +170,5 @@ public class CarDetailsActivity extends ActionBarActivity implements OnClickList
 		Toast.makeText(getApplicationContext(), "Rented Successful!", Toast.LENGTH_SHORT).show();
 
 	}
-	
-	
+
 }

@@ -76,7 +76,9 @@ public class CarsData {
 	}
 
 	public void deleteCar(CarModel car) {
+		open();
 		String backendId = car.getCarId().toString();
 		database.delete(DbHelper.TABLE_CARS, DbHelper.COLUMN_BACKEND_ID + " = " + backendId, null);
+		close();
 	}
 }

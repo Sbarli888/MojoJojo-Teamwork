@@ -23,6 +23,8 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.background_geolocator.GeolocationService;
+import com.example.background_geolocator.LocationRetriever;
 import com.telerik.everlive.sdk.core.EverliveApp;
 import com.telerik.everlive.sdk.core.facades.special.DownloadFileAsStreamFacade;
 import com.telerik.everlive.sdk.core.model.system.User;
@@ -43,6 +45,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
 	ObjectAnimator waveOneAnimator;
 	CheckBox rememberUserBox;
 	UserDataPreference mUserInfo;
+Intent serviceIntent;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +120,8 @@ public class HomeActivity extends Activity implements View.OnClickListener {
 		password = (EditText) findViewById(R.id.PasswordInput);
 		rememberUserBox = (CheckBox) findViewById(R.id.checkBox1);
 		mUserInfo = new UserDataPreference(context);
+
+		new LocationRetriever(context).getLocationName();
 
 		registerBtn.setOnClickListener(this);
 		loginBtn.setOnClickListener(this);

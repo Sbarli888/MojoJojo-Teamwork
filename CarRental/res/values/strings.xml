@@ -13,5 +13,7 @@
     <string name="car_price">Price: </string>
     <string name="car_share">Share</string>
     <string name="car_rent">Rent</string>
+    <string name="facebook_app_id">280105352180250</string>
+    <string name="title_activity_return_car">ReturnCarActivity</string>
 
 </resources>

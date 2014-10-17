@@ -182,10 +182,15 @@ public class AvailableCarsActivity extends Activity implements OnItemLongClickLi
 			Intent intent = new Intent(AvailableCarsActivity.this, HomeActivity.class);
 			startActivity(intent);
 			return true;
-		}
-		if (item.getItemId() == R.id.action_refresh) {
+		} else if (item.getItemId() == R.id.action_refresh) {
 			adapter.notifyDataSetChanged();
 			callAsynchronousTask();
+			return true;
+
+		}
+		if (item.getItemId() == R.id.action_rented_cars) {
+			Intent intent = new Intent(AvailableCarsActivity.this, RentedCarsActivity.class);
+			startActivity(intent);
 			return true;
 		}
 		return false;
@@ -209,14 +214,14 @@ public class AvailableCarsActivity extends Activity implements OnItemLongClickLi
 				handler.post(new Runnable() {
 					public void run() {
 						try {
-							if(isNetworkConnected()){
+							if (isNetworkConnected()) {
 								ListviewUpdater performBackgroundTask = new ListviewUpdater();
 
 								performBackgroundTask.execute();
-							}else {
+							} else {
 								Toast.makeText(mContext, "Check your internet connection!", Toast.LENGTH_SHORT).show();
 							}
-							
+
 							// PerformBackgroundTask this class is the class
 							// that extends AsynchTask
 						} catch (Exception e) {
@@ -235,8 +240,9 @@ public class AvailableCarsActivity extends Activity implements OnItemLongClickLi
 
 		@Override
 		protected ArrayList<CarModel> doInBackground(Void... params) {
-			if(isNetworkConnected()){
-				RequestResult<ArrayList<CarModel>> result = this.app.workWith().data(CarModel.class).getAll().executeSync();
+			if (isNetworkConnected()) {
+				RequestResult<ArrayList<CarModel>> result = this.app.workWith().data(CarModel.class).getAll()
+						.executeSync();
 				if (result.getSuccess()) {
 					Log.d("SSDSDAS", "OK");
 					cars.clear();
@@ -266,14 +272,14 @@ public class AvailableCarsActivity extends Activity implements OnItemLongClickLi
 					Log.d("SSDSDAS", "fail");
 				}
 			}
-			
+
 			return null;
 		}
 
 		@Override
 		protected void onPostExecute(ArrayList<CarModel> cars) {
 
-			if(isNetworkConnected()){
+			if (isNetworkConnected()) {
 				ArrayList<String> tempIds = new ArrayList<String>();
 				for (CarModel car : cars) {
 					if (!(carsIds.contains(car.getCarId().toString()))) {
@@ -291,7 +297,6 @@ public class AvailableCarsActivity extends Activity implements OnItemLongClickLi
 			} else {
 				Toast.makeText(mContext, "Check connection", Toast.LENGTH_SHORT).show();
 			}
-			
 
 		}
 	}
